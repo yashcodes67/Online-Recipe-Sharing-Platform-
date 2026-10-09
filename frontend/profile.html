@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile — RecipeBook</title>
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍳</text></svg>" />
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand"><span class="nav-brand-icon">🍳</span>RecipeBook</a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="recipes.html" class="nav-link">Browse</a>
+      <a href="add-recipe.html" class="nav-link nav-auth" style="display:none">+ Add Recipe</a>
+    </div>
+    <div class="nav-actions">
+      <div class="nav-guest">
+        <button class="btn btn-ghost btn-sm" id="loginBtn">Login</button>
+      </div>
+      <div class="nav-auth" style="display:none">
+        <a href="#" class="nav-avatar-link" style="display:flex;align-items:center;gap:8px;">
+          <div class="author-avatar" style="width:32px;height:32px;font-size:.85rem;" id="navAvatar">U</div>
+          <span class="nav-username" id="navUsername"></span>
+        </a>
+        <button class="btn btn-outline btn-sm" id="logoutBtn">Logout</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <!-- Loading -->
+  <div id="loadingState" style="text-align:center;padding:80px 24px;">
+    <div class="spinner" style="margin:0 auto 16px;width:44px;height:44px;border:3px solid var(--sand);border-top-color:var(--saffron);border-radius:50%;animation:spin .7s linear infinite;"></div>
+    <p style="color:var(--text-muted);">Loading profile…</p>
+  </div>
+
+  <!-- Error -->
+  <div id="errorState" class="empty-state hidden">
+    <div class="empty-state-icon">😕</div>
+    <h3>User Not Found</h3>
+    <p>This profile doesn't exist or was removed.</p>
+    <a href="index.html" class="btn btn-primary mt-16">Go Home</a>
+  </div>
+
+  <!-- Profile -->
+  <div id="profileContent" class="profile-page hidden">
+
+    <!-- Profile header card -->
+    <div class="profile-header">
+      <div class="profile-avatar-large" id="profileAvatar">?</div>
+      <div class="profile-info">
+        <h1 class="profile-name" id="profileUsername"></h1>
+        <p class="profile-bio" id="profileBio"></p>
+        <div class="profile-stats">
+          <div class="profile-stat">
+            <div class="profile-stat-number" id="profileRecipeCount">0</div>
+            <div class="profile-stat-label">Recipes</div>
+          </div>
+          <div class="profile-stat">
+            <div class="profile-stat-number" id="profileJoined">—</div>
+            <div class="profile-stat-label">Member Since</div>
+          </div>
+        </div>
+        <div id="ownProfileActions" style="margin-top:16px;display:none;">
+          <a href="add-recipe.html" class="btn btn-primary btn-sm">+ Add New Recipe</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- User recipes -->
+    <div>
+      <h2 style="margin-bottom:20px;" id="recipesHeading">Recipes</h2>
+      <div class="recipes-grid" id="userRecipesGrid"></div>
+      <div id="noRecipes" class="empty-state hidden" style="padding:48px 0;">
+        <div class="empty-state-icon">🍽</div>
+        <h3 id="noRecipesTitle">No recipes yet</h3>
+        <p id="noRecipesMsg">This chef hasn't published any recipes yet.</p>
+        <div id="ownNoRecipes" style="display:none;">
+          <a href="add-recipe.html" class="btn btn-primary mt-16">Share Your First Recipe</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer style="background:var(--charcoal);color:rgba(255,255,255,.55);text-align:center;padding:24px;font-size:.85rem;margin-top:48px;">
+  <p>🍳 Collaborative Recipe Book &copy; 2025</p>
+</footer>
+
+<script src="js/auth.js"></script>
+<script src="js/recipes.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/profile.js"></script>
+</body>
+</html>

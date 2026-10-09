@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Browse Recipes — RecipeBook</title>
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍳</text></svg>" />
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand"><span class="nav-brand-icon">🍳</span>RecipeBook</a>
+    <div class="nav-links" id="navLinks">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="recipes.html" class="nav-link active">Browse</a>
+      <a href="add-recipe.html" class="nav-link nav-auth" style="display:none">+ Add Recipe</a>
+    </div>
+    <div class="nav-actions">
+      <div class="nav-guest">
+        <button class="btn btn-ghost btn-sm" id="loginBtn">Login</button>
+        <button class="btn btn-primary btn-sm" id="registerBtn">Sign Up</button>
+      </div>
+      <div class="nav-auth" style="display:none">
+        <a href="#" class="nav-avatar-link" style="display:flex;align-items:center;gap:8px;">
+          <div class="author-avatar" style="width:32px;height:32px;font-size:.85rem;" id="navAvatar">U</div>
+          <span class="nav-username" id="navUsername"></span>
+        </a>
+        <button class="btn btn-outline btn-sm" id="logoutBtn">Logout</button>
+      </div>
+      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <h1>Browse All Recipes</h1>
+  <p>Explore our growing collection of community recipes</p>
+  <div style="max-width:520px;margin:20px auto 0;">
+    <form class="search-bar" id="searchForm">
+      <input type="text" class="search-input" id="searchInput" placeholder="Search by title or ingredient…" autocomplete="off" />
+      <button type="submit" class="search-btn">Search</button>
+    </form>
+  </div>
+</div>
+
+<!-- FILTERS -->
+<div style="background:var(--warm-white);border-bottom:1px solid var(--border);padding:16px 0;position:sticky;top:var(--nav-h);z-index:50;">
+  <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+    <div class="filter-pills" id="filterPills">
+      <button class="filter-pill active" data-cat="All">All</button>
+      <button class="filter-pill" data-cat="Veg">🥗 Veg</button>
+      <button class="filter-pill" data-cat="Non-Veg">🍗 Non-Veg</button>
+      <button class="filter-pill" data-cat="Vegan">🌱 Vegan</button>
+      <button class="filter-pill" data-cat="Dessert">🍰 Dessert</button>
+      <button class="filter-pill" data-cat="Breakfast">🥞 Breakfast</button>
+      <button class="filter-pill" data-cat="Snack">🥨 Snack</button>
+      <button class="filter-pill" data-cat="Beverage">🧃 Beverage</button>
+      <button class="filter-pill" data-cat="Other">🍽 Other</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+      <span id="resultCount" style="font-size:.85rem;color:var(--text-muted);"></span>
+      <select class="sort-select" id="sortSelect">
+        <option value="">Newest</option>
+        <option value="rating">Top Rated</option>
+        <option value="popular">Most Rated</option>
+        <option value="oldest">Oldest</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN GRID -->
+<main class="section">
+  <div class="container">
+    <div class="recipes-grid" id="recipesGrid"></div>
+    <div id="emptyState" class="empty-state hidden">
+      <div class="empty-state-icon">🔍</div>
+      <h3>No recipes found</h3>
+      <p id="emptyMsg">Try a different search or category.</p>
+      <a href="add-recipe.html" class="btn btn-primary mt-16">Add the First Recipe</a>
+    </div>
+    <div class="pagination" id="pagination"></div>
+  </div>
+</main>
+
+<!-- AUTH MODAL (shared) -->
+<div class="modal-overlay hidden" id="authModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="authModalTitle">Welcome Back</h2>
+      <button class="modal-close" id="authModalClose">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-tab="login">Login</button>
+        <button class="auth-tab" data-tab="register">Sign Up</button>
+      </div>
+      <div class="auth-panel active" id="loginPanel">
+        <form class="auth-form" id="loginForm" novalidate>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" id="loginEmail" class="form-input" placeholder="you@example.com" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" id="loginPassword" class="form-input" placeholder="••••••••" />
+          </div>
+          <div id="loginError" style="color:#dc3545;font-size:.87rem;display:none;"></div>
+          <button type="submit" class="btn btn-primary" id="loginSubmit" style="width:100%;">Login</button>
+        </form>
+      </div>
+      <div class="auth-panel" id="registerPanel">
+        <form class="auth-form" id="registerForm" novalidate>
+          <div class="form-group">
+            <label class="form-label">Username</label>
+            <input type="text" id="regUsername" class="form-input" placeholder="chef_mario" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" id="regEmail" class="form-input" placeholder="you@example.com" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" id="regPassword" class="form-input" placeholder="Min 6 characters" />
+          </div>
+          <div id="registerError" style="color:#dc3545;font-size:.87rem;display:none;"></div>
+          <button type="submit" class="btn btn-primary" id="registerSubmit" style="width:100%;">Create Account</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer style="background:var(--charcoal);color:rgba(255,255,255,.55);text-align:center;padding:24px;font-size:.85rem;">
+  <p>🍳 Collaborative Recipe Book &copy; 2025</p>
+</footer>
+
+<script src="js/auth.js"></script>
+<script src="js/recipes.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/browse.js"></script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Collaborative Recipe Book</title>
+  <meta name="description" content="Discover, share and rate delicious recipes from chefs around the world." />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍳</text></svg>" />
+</head>
+<body>
+
+<!-- ── NAVBAR ──────────────────────────────────────────── -->
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <span class="nav-brand-icon">🍳</span>
+      RecipeBook
+    </a>
+
+    <div class="nav-links" id="navLinks">
+      <a href="index.html" class="nav-link active">Home</a>
+      <a href="recipes.html" class="nav-link">Browse</a>
+      <a href="add-recipe.html" class="nav-link nav-auth" style="display:none">+ Add Recipe</a>
+    </div>
+
+    <div class="nav-actions">
+      <!-- Guest links -->
+      <div class="nav-guest">
+        <button class="btn btn-ghost btn-sm" id="loginBtn">Login</button>
+        <button class="btn btn-primary btn-sm" id="registerBtn">Sign Up</button>
+      </div>
+      <!-- Auth links -->
+      <div class="nav-auth" style="display:none">
+        <a href="#" class="nav-avatar-link" style="display:flex;align-items:center;gap:8px;">
+          <div class="author-avatar" style="width:32px;height:32px;font-size:.85rem;" id="navAvatar">U</div>
+          <span class="nav-username" id="navUsername"></span>
+        </a>
+        <button class="btn btn-outline btn-sm" id="logoutBtn">Logout</button>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ── HERO ────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-content">
+    <p class="hero-eyebrow">🌿 Community-Powered Cooking</p>
+    <h1>Recipes Made with<br><em>Love &amp; Shared</em> with the World</h1>
+    <p>Discover thousands of recipes, rate your favourites, and share your own culinary creations with a passionate community of food lovers.</p>
+    <div class="hero-actions">
+      <a href="recipes.html" class="btn btn-primary btn-lg">Browse Recipes</a>
+      <a href="add-recipe.html" class="btn btn-outline btn-lg" style="border-color:rgba(255,255,255,.4);color:#fff;" id="heroAddBtn">Share a Recipe</a>
+    </div>
+
+    <!-- Hero Search -->
+    <div style="margin-top:36px;max-width:540px;margin-left:auto;margin-right:auto;">
+      <form class="search-bar" id="heroSearchForm">
+        <input type="text" class="search-input" id="heroSearch" placeholder="Search recipes, ingredients…" autocomplete="off" />
+        <button type="submit" class="search-btn">Search</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ── MAIN CONTENT ─────────────────────────────────────── -->
+<main>
+
+  <!-- Category Filter -->
+  <section style="padding:32px 0 0;">
+    <div class="container">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
+        <h2 style="font-size:1.5rem;">Latest Recipes</h2>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <label for="sortSelect" class="sr-only">Sort by</label>
+          <select class="sort-select" id="sortSelect">
+            <option value="">Newest First</option>
+            <option value="rating">Top Rated</option>
+            <option value="popular">Most Rated</option>
+            <option value="oldest">Oldest First</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="filter-pills" id="filterPills">
+        <button class="filter-pill active" data-cat="All">All</button>
+        <button class="filter-pill" data-cat="Veg">🥗 Veg</button>
+        <button class="filter-pill" data-cat="Non-Veg">🍗 Non-Veg</button>
+        <button class="filter-pill" data-cat="Vegan">🌱 Vegan</button>
+        <button class="filter-pill" data-cat="Dessert">🍰 Dessert</button>
+        <button class="filter-pill" data-cat="Breakfast">🥞 Breakfast</button>
+        <button class="filter-pill" data-cat="Snack">🥨 Snack</button>
+        <button class="filter-pill" data-cat="Beverage">🧃 Beverage</button>
+        <button class="filter-pill" data-cat="Other">🍽 Other</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recipe Grid -->
+  <section class="section" style="padding-top:24px;">
+    <div class="container">
+      <div class="recipes-grid" id="recipesGrid"></div>
+      <div id="emptyState" class="empty-state hidden">
+        <div class="empty-state-icon">🍽</div>
+        <h3>No recipes found</h3>
+        <p>Be the first to add a recipe in this category!</p>
+        <a href="add-recipe.html" class="btn btn-primary">Add Recipe</a>
+      </div>
+      <div class="pagination" id="pagination"></div>
+    </div>
+  </section>
+
+  <!-- Stats Banner -->
+  <section style="background:var(--espresso);padding:48px 24px;text-align:center;">
+    <div class="container">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:32px;max-width:600px;margin:0 auto;">
+        <div>
+          <div style="font-size:2.2rem;font-family:var(--font-display);font-weight:700;color:var(--saffron-light);" id="statRecipes">—</div>
+          <div style="color:rgba(255,255,255,.6);font-size:.85rem;margin-top:4px;">Recipes Shared</div>
+        </div>
+        <div>
+          <div style="font-size:2.2rem;font-family:var(--font-display);font-weight:700;color:var(--saffron-light);">8</div>
+          <div style="color:rgba(255,255,255,.6);font-size:.85rem;margin-top:4px;">Categories</div>
+        </div>
+        <div>
+          <div style="font-size:2.2rem;font-family:var(--font-display);font-weight:700;color:var(--saffron-light);">★ 4.8</div>
+          <div style="color:rgba(255,255,255,.6);font-size:.85rem;margin-top:4px;">Avg Rating</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ── AUTH MODAL ───────────────────────────────────────── -->
+<div class="modal-overlay hidden" id="authModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
+    <div class="modal-header">
+      <h2 class="modal-title" id="authModalTitle">Welcome Back</h2>
+      <button class="modal-close" id="authModalClose" aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <!-- Tabs -->
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-tab="login">Login</button>
+        <button class="auth-tab" data-tab="register">Sign Up</button>
+      </div>
+
+      <!-- Login Panel -->
+      <div class="auth-panel active" id="loginPanel">
+        <form class="auth-form" id="loginForm" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="loginEmail">Email Address</label>
+            <input type="email" id="loginEmail" class="form-input" placeholder="you@example.com" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" class="form-input" placeholder="••••••••" required />
+          </div>
+          <div id="loginError" style="color:#dc3545;font-size:.87rem;display:none;"></div>
+          <button type="submit" class="btn btn-primary" id="loginSubmit" style="width:100%;">Login</button>
+          <p style="text-align:center;font-size:.87rem;color:var(--text-muted);">
+            Don't have an account? <button type="button" class="auth-tab-switch" data-to="register" style="color:var(--saffron);font-weight:600;background:none;border:none;cursor:pointer;">Sign up</button>
+          </p>
+        </form>
+      </div>
+
+      <!-- Register Panel -->
+      <div class="auth-panel" id="registerPanel">
+        <form class="auth-form" id="registerForm" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="regUsername">Username</label>
+            <input type="text" id="regUsername" class="form-input" placeholder="Enter your username" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="regEmail">Email Address</label>
+            <input type="email" id="regEmail" class="form-input" placeholder="you@example.com" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="regPassword">Password</label>
+            <input type="password" id="regPassword" class="form-input" placeholder="Min 6 characters" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="regBio">Short Bio <span style="font-weight:400;color:var(--text-muted)">(optional)</span></label>
+            <input type="text" id="regBio" class="form-input" placeholder="I love Italian cuisine!" />
+          </div>
+          <div id="registerError" style="color:#dc3545;font-size:.87rem;display:none;"></div>
+          <button type="submit" class="btn btn-primary" id="registerSubmit" style="width:100%;">Create Account</button>
+          <p style="text-align:center;font-size:.87rem;color:var(--text-muted);">
+            Already have an account? <button type="button" class="auth-tab-switch" data-to="login" style="color:var(--saffron);font-weight:600;background:none;border:none;cursor:pointer;">Login</button>
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FOOTER ───────────────────────────────────────────── -->
+<footer style="background:var(--charcoal);color:rgba(255,255,255,.55);text-align:center;padding:28px 24px;font-size:.85rem;">
+  <p>🍳 Collaborative Recipe Book &copy; 2025 — Made with ❤️ for food lovers everywhere</p>
+</footer>
+
+<!-- Scripts -->
+<script src="js/auth.js"></script>
+<script src="js/recipes.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/index.js"></script>
+</body>
+</html>

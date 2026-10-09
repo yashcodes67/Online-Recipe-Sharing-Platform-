@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recipe — RecipeBook</title>
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍳</text></svg>" />
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand"><span class="nav-brand-icon">🍳</span>RecipeBook</a>
+    <div class="nav-links" id="navLinks">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="recipes.html" class="nav-link">Browse</a>
+      <a href="add-recipe.html" class="nav-link nav-auth" style="display:none">+ Add Recipe</a>
+    </div>
+    <div class="nav-actions">
+      <div class="nav-guest">
+       <a href="index.html?login=true" class="btn btn-ghost btn-sm">Login</a>
+       <a href="index.html?register=true" class="btn btn-primary btn-sm">Sign Up</a>
+      </div>
+      <div class="nav-auth" style="display:none">
+        <a href="#" class="nav-avatar-link" style="display:flex;align-items:center;gap:8px;">
+          <div class="author-avatar" style="width:32px;height:32px;font-size:.85rem;" id="navAvatar">U</div>
+          <span class="nav-username" id="navUsername"></span>
+        </a>
+        <button class="btn btn-outline btn-sm" id="logoutBtn">Logout</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- CONTENT -->
+<main>
+  <!-- Loading state -->
+  <div id="loadingState" class="empty-state" style="padding:80px 24px;">
+    <div class="spinner" style="margin:0 auto 16px;width:44px;height:44px;border:3px solid var(--sand);border-top-color:var(--saffron);border-radius:50%;animation:spin .7s linear infinite;"></div>
+    <p>Loading recipe…</p>
+  </div>
+
+  <!-- Error state -->
+  <div id="errorState" class="empty-state hidden">
+    <div class="empty-state-icon">😕</div>
+    <h3>Recipe Not Found</h3>
+    <p>This recipe may have been removed or the link is invalid.</p>
+    <a href="recipes.html" class="btn btn-primary mt-16">Browse All Recipes</a>
+  </div>
+
+  <!-- Recipe detail -->
+  <div id="recipeDetail" class="recipe-detail hidden">
+
+    <!-- Back link -->
+    <a href="recipes.html" style="display:inline-flex;align-items:center;gap:6px;color:var(--text-muted);font-size:.875rem;margin-bottom:24px;transition:color var(--transition);"
+       onmouseover="this.style.color='var(--saffron)'" onmouseout="this.style.color='var(--text-muted)'">
+      ← Back to Recipes
+    </a>
+
+    <!-- Hero image -->
+    <img id="recipeHeroImg" class="recipe-hero-img" src="" alt="" style="display:none;" />
+
+    <!-- Header -->
+    <div class="recipe-header">
+      <div class="recipe-meta-row">
+        <span class="recipe-tag" id="recipeCategory" style="color:#fff;"></span>
+        <span id="recipeDifficulty" class="recipe-tag" style="font-size:.75rem;"></span>
+        <span style="color:var(--text-muted);font-size:.85rem;" id="recipeDate"></span>
+      </div>
+      <h1 class="recipe-title-detail" id="recipeTitle"></h1>
+      <p class="recipe-description-detail" id="recipeDesc"></p>
+
+      <!-- Author -->
+      <div style="display:flex;align-items:center;gap:10px;margin-top:16px;">
+        <div class="author-avatar" id="authorAvatar" style="width:38px;height:38px;font-size:1rem;"></div>
+        <div>
+          <div style="font-size:.8rem;color:var(--text-muted);">Recipe by</div>
+          <a id="authorLink" href="#" style="font-weight:600;color:var(--espresso);font-size:.95rem;"></a>
+        </div>
+        <!-- Owner actions -->
+        <div id="ownerActions" style="margin-left:auto;display:none;gap:8px;align-items:center;" class="flex">
+          <a id="editRecipeBtn" href="#" class="btn btn-outline btn-sm">✏️ Edit</a>
+          <button id="deleteRecipeBtn" class="btn btn-danger btn-sm">🗑 Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats bar -->
+    <div class="recipe-stats">
+      <div class="stat-item" id="statTime" style="display:none">
+        <span class="stat-label">Cook Time</span>
+        <span class="stat-value" id="recipeTime">—</span>
+      </div>
+      <div class="stat-item" id="statServings" style="display:none">
+        <span class="stat-label">Servings</span>
+        <span class="stat-value" id="recipeServings">—</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Avg Rating</span>
+        <span class="stat-value" id="recipeRating">—</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Total Ratings</span>
+        <span class="stat-value" id="recipeRatingCount">0</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Comments</span>
+        <span class="stat-value" id="recipeCommentCount">0</span>
+      </div>
+    </div>
+
+    <!-- Ingredients + Steps -->
+    <div class="recipe-body">
+      <aside class="recipe-ingredients">
+        <h2 style="font-size:1.3rem;margin-bottom:16px;">Ingredients</h2>
+        <ul class="ingredients-list" id="ingredientsList"></ul>
+      </aside>
+
+      <section>
+        <h2 style="font-size:1.3rem;margin-bottom:16px;">Instructions</h2>
+        <ol class="steps-list" id="stepsList"></ol>
+      </section>
+    </div>
+
+    <!-- Rating Section -->
+    <div class="rating-section" id="ratingSection">
+      <h2 style="font-size:1.2rem;margin-bottom:16px;">Ratings</h2>
+      <div class="avg-rating-display">
+        <div class="avg-number" id="avgRatingNum">—</div>
+        <div>
+          <div class="avg-stars" id="avgStars"></div>
+          <div class="avg-count" id="avgCount"></div>
+        </div>
+      </div>
+
+      <div id="ratePrompt" style="margin-top:16px;">
+        <p style="font-size:.9rem;font-weight:600;margin-bottom:10px;color:var(--espresso);" id="rateLabel">Rate this recipe:</p>
+        <div id="starContainer"></div>
+        <p id="rateLoginMsg" class="hidden" style="font-size:.88rem;color:var(--text-muted);margin-top:8px;">
+          <a href="#" id="rateLoginLink" style="color:var(--saffron);font-weight:600;">Login</a> to rate this recipe.
+        </p>
+      </div>
+    </div>
+
+    <!-- Comments -->
+    <div class="comments-section">
+      <h2 style="font-size:1.2rem;margin-bottom:4px;">Comments</h2>
+      <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:16px;" id="commentCountLabel"></p>
+
+      <!-- Add comment -->
+      <div id="commentFormWrap">
+        <form class="comment-form" id="commentForm">
+          <input type="text" class="comment-input" id="commentInput"
+            placeholder="Share your thoughts on this recipe…" maxlength="500" autocomplete="off" />
+          <button type="submit" class="btn btn-primary btn-sm" id="commentSubmit">Post</button>
+        </form>
+        <p id="commentLoginMsg" class="hidden" style="font-size:.88rem;color:var(--text-muted);margin-top:8px;">
+          <a href="#" id="commentLoginLink" style="color:var(--saffron);font-weight:600;">Login</a> to leave a comment.
+        </p>
+      </div>
+
+      <div class="comments-list" id="commentsList">
+        <p style="color:var(--text-muted);font-size:.9rem;text-align:center;padding:24px 0;">No comments yet. Be the first!</p>
+      </div>
+    </div>
+
+  </div><!-- /recipeDetail -->
+</main>
+
+<!-- Delete Confirm Modal -->
+<div class="modal-overlay hidden" id="deleteModal">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-header">
+      <h2 class="modal-title">Delete Recipe?</h2>
+      <button class="modal-close" id="deleteModalClose">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--text-secondary);margin-bottom:24px;">This action cannot be undone. The recipe and all its data will be permanently removed.</p>
+      <div style="display:flex;gap:12px;">
+        <button class="btn btn-outline" style="flex:1;" id="deleteCancelBtn">Cancel</button>
+        <button class="btn btn-danger" style="flex:1;" id="deleteConfirmBtn">Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer style="background:var(--charcoal);color:rgba(255,255,255,.55);text-align:center;padding:24px;font-size:.85rem;">
+  <p>🍳 Collaborative Recipe Book &copy; 2025</p>
+</footer>
+
+<script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/recipes.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/recipe-detail.js"></script>
+</body>
+</html>
