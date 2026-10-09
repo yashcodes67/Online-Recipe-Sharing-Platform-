@@ -3,8 +3,7 @@
 An Online Recipe Sharing Platform where users can share, discover, rate, and comment on recipes in real time.
 
 
-🌐 Live Demo
-Frontend: https://frabjous-daffodil-691603.netlify.app
+🌐 Try Live Demo: https://frabjous-daffodil-691603.netlify.app
 ---
 
 ## ✨ Features
